@@ -77,7 +77,11 @@ const VocabulaireModule = React.memo(({ onTerug }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-400 to-emerald-600 p-8">
+    <div
+      className="min-h-screen bg-gradient-to-br from-green-400 to-emerald-600 p-8"
+      onKeyDown={handleKeyPress}
+      tabIndex={-1}
+    >
       <div className="max-w-2xl mx-auto">
         <button
           onClick={onTerug}
@@ -160,7 +164,6 @@ const VocabulaireModule = React.memo(({ onTerug }) => {
                 type="text"
                 value={antwoord}
                 onChange={(e) => setAntwoord(e.target.value)}
-                onKeyPress={handleKeyPress}
                 placeholder="Type je antwoord..."
                 className="w-full p-3 border-2 border-gray-300 rounded-lg mb-4 text-lg"
                 disabled={feedback !== null}
