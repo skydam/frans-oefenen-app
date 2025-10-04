@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { ArrowLeft, Check, X } from 'lucide-react';
 import { useModuleState } from '../hooks/useModuleState.js';
 import AccentKnoppen from '../components/AccentKnoppen.jsx';
+import CompletionScreen from '../components/CompletionScreen.jsx';
 import { voorbeelden, lidwoorden } from '../data/voorbeelden.js';
 
 /**
@@ -20,7 +21,12 @@ const GrammaticaModule = React.memo(({ onTerug }) => {
     huidig,
     voegAccentToe,
     controleerAntwoord,
-    volgend
+    volgend,
+    isVoltooid,
+    totaalVragen,
+    juisteAntwoorden,
+    hoogsteStreak,
+    herstart
   } = useModuleState(voorbeelden);
 
   // Handle answer checking
@@ -29,10 +35,28 @@ const GrammaticaModule = React.memo(({ onTerug }) => {
   }, [antwoord, huidig, controleerAntwoord]);
 
   const handleKeyPress = useCallback((e) => {
-    if (e.key === 'Enter' && !feedback && antwoord) {
-      handleControleer();
+    if (e.key === 'Enter') {
+      if (feedback !== null) {
+        volgend();
+      } else if (antwoord) {
+        handleControleer();
+      }
     }
-  }, [feedback, antwoord, handleControleer]);
+  }, [feedback, antwoord, handleControleer, volgend]);
+
+  // Show completion screen when finished (only in practice mode)
+  if (isVoltooid && !theorieModus) {
+    return (
+      <CompletionScreen
+        totaalVragen={totaalVragen}
+        juisteAntwoorden={juisteAntwoorden}
+        hoogsteStreak={hoogsteStreak}
+        onOpnieuw={herstart}
+        onMenu={onTerug}
+        moduleKleur="pink"
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-400 to-rose-600 p-8">
@@ -173,7 +197,7 @@ const GrammaticaModule = React.memo(({ onTerug }) => {
 
           {!theorieModus && (
             <p className="text-center text-sm text-gray-600">
-              Vraag {huidigeIndex + 1} van {voorbeelden.length}
+              Vraag {huidigeIndex + 1} van {totaalVragen}
             </p>
           )}
         </div>

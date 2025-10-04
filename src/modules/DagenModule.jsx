@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { ArrowLeft, Shuffle, Check, X } from 'lucide-react';
 import { useModuleState } from '../hooks/useModuleState.js';
 import AccentKnoppen from '../components/AccentKnoppen.jsx';
+import CompletionScreen from '../components/CompletionScreen.jsx';
 import { dagen } from '../data/dagen.js';
 
 /**
@@ -20,7 +21,12 @@ const DagenModule = React.memo(({ onTerug }) => {
     voegAccentToe,
     controleerAntwoord,
     volgend,
-    wisselRichting
+    wisselRichting,
+    isVoltooid,
+    totaalVragen,
+    juisteAntwoorden,
+    hoogsteStreak,
+    herstart
   } = useModuleState(dagen);
 
   // Handle answer checking
@@ -30,10 +36,28 @@ const DagenModule = React.memo(({ onTerug }) => {
   }, [richting, antwoord, huidig, controleerAntwoord]);
 
   const handleKeyPress = useCallback((e) => {
-    if (e.key === 'Enter' && !feedback) {
-      handleControleer();
+    if (e.key === 'Enter') {
+      if (feedback !== null) {
+        volgend();
+      } else {
+        handleControleer();
+      }
     }
-  }, [feedback, handleControleer]);
+  }, [feedback, handleControleer, volgend]);
+
+  // Show completion screen when finished
+  if (isVoltooid) {
+    return (
+      <CompletionScreen
+        totaalVragen={totaalVragen}
+        juisteAntwoorden={juisteAntwoorden}
+        hoogsteStreak={hoogsteStreak}
+        onOpnieuw={herstart}
+        onMenu={onTerug}
+        moduleKleur="purple"
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 to-purple-600 p-8">
@@ -116,7 +140,7 @@ const DagenModule = React.memo(({ onTerug }) => {
           </div>
 
           <p className="text-center text-sm text-gray-600">
-            Vraag {huidigeIndex + 1} van {dagen.length}
+            Vraag {huidigeIndex + 1} van {totaalVragen}
           </p>
         </div>
       </div>

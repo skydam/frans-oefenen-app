@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { ArrowLeft, Shuffle, Check, X } from 'lucide-react';
 import { useModuleState } from '../hooks/useModuleState.js';
 import AccentKnoppen from '../components/AccentKnoppen.jsx';
+import CompletionScreen from '../components/CompletionScreen.jsx';
 import { vocabulaire } from '../data/vocabulaire.js';
 
 /**
@@ -24,7 +25,12 @@ const VocabulaireModule = React.memo(({ onTerug }) => {
     voegAccentToe,
     controleerAntwoord,
     volgend,
-    wisselRichting
+    wisselRichting,
+    isVoltooid,
+    totaalVragen,
+    juisteAntwoorden,
+    hoogsteStreak,
+    herstart
   } = useModuleState(vocabulaire);
 
   // Handle answer checking with support for multiple answers
@@ -34,23 +40,41 @@ const VocabulaireModule = React.memo(({ onTerug }) => {
     controleerAntwoord(antwoord, correctAnswer, true);
   }, [richting, antwoord, huidig, controleerAntwoord]);
 
-  const handleKeyPress = useCallback((e) => {
-    if (e.key === 'Enter' && !feedback) {
-      handleControleer();
-    }
-  }, [feedback, handleControleer]);
-
   // Enhanced volgend for flashcards
   const handleVolgend = useCallback(() => {
     volgend();
     setFlashcardOmgedraaid(false);
   }, [volgend]);
 
+  const handleKeyPress = useCallback((e) => {
+    if (e.key === 'Enter') {
+      if (feedback !== null) {
+        handleVolgend();
+      } else {
+        handleControleer();
+      }
+    }
+  }, [feedback, handleControleer, handleVolgend]);
+
   // Enhanced wisselRichting for flashcards
   const handleWisselRichting = useCallback(() => {
     wisselRichting();
     setFlashcardOmgedraaid(false);
   }, [wisselRichting]);
+
+  // Show completion screen when finished
+  if (isVoltooid) {
+    return (
+      <CompletionScreen
+        totaalVragen={totaalVragen}
+        juisteAntwoorden={juisteAntwoorden}
+        hoogsteStreak={hoogsteStreak}
+        onOpnieuw={herstart}
+        onMenu={onTerug}
+        moduleKleur="green"
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-400 to-emerald-600 p-8">
@@ -180,7 +204,7 @@ const VocabulaireModule = React.memo(({ onTerug }) => {
           )}
 
           <p className="text-center text-sm text-gray-600">
-            Woord {huidigeIndex + 1} van {vocabulaire.length}
+            Woord {huidigeIndex + 1} van {totaalVragen}
           </p>
         </div>
       </div>

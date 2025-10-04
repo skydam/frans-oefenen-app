@@ -1,5 +1,5 @@
 export const getallen = [
-  { getal: 0, frans: "zéro" },
+  { getal: 0, frans: "zéro", alternatieven: ["nul"] },
   { getal: 1, frans: "un" },
   { getal: 2, frans: "deux" },
   { getal: 3, frans: "trois" },

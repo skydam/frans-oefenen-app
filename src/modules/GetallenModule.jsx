@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { ArrowLeft, Shuffle, Check, X } from 'lucide-react';
 import { useModuleState } from '../hooks/useModuleState.js';
 import AccentKnoppen from '../components/AccentKnoppen.jsx';
+import CompletionScreen from '../components/CompletionScreen.jsx';
 import { getallen } from '../data/getallen.js';
 
 /**
@@ -20,30 +21,56 @@ const GetallenModule = React.memo(({ onTerug }) => {
     voegAccentToe,
     controleerAntwoord,
     volgend,
-    wisselRichting
+    wisselRichting,
+    isVoltooid,
+    totaalVragen,
+    juisteAntwoorden,
+    hoogsteStreak,
+    herstart
   } = useModuleState(getallen);
 
   // Handle answer checking with proper logic for numbers
   const handleControleer = useCallback(() => {
     if (richting === 'frans-nl') {
       // Check if the answer matches the number (as string)
-      const correct = antwoord.toString().trim() === huidig.getal.toString();
       controleerAntwoord(
         antwoord.toString().trim(),
         huidig.getal.toString(),
-        false
+        []
       );
     } else {
-      // Check French spelling (normalized)
-      controleerAntwoord(antwoord, huidig.frans, false);
+      // Check French spelling with alternatives (e.g., "nul" for 0)
+      controleerAntwoord(
+        antwoord,
+        huidig.frans,
+        huidig.alternatieven || []
+      );
     }
   }, [richting, antwoord, huidig, controleerAntwoord]);
 
   const handleKeyPress = useCallback((e) => {
-    if (e.key === 'Enter' && !feedback) {
-      handleControleer();
+    if (e.key === 'Enter') {
+      if (feedback !== null) {
+        volgend();
+      } else {
+        handleControleer();
+      }
     }
-  }, [feedback, handleControleer]);
+  }, [feedback, handleControleer, volgend]);
+
+  // Show completion screen when finished
+  if (isVoltooid) {
+    return (
+      <CompletionScreen
+        totaalVragen={totaalVragen}
+        juisteAntwoorden={juisteAntwoorden}
+        hoogsteStreak={hoogsteStreak}
+        onOpnieuw={herstart}
+        onMenu={onTerug}
+        moduleKleur="blue"
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 to-indigo-500 p-8">
@@ -126,7 +153,7 @@ const GetallenModule = React.memo(({ onTerug }) => {
           </div>
 
           <p className="text-center text-sm text-gray-600">
-            Vraag {huidigeIndex + 1} van {getallen.length}
+            Vraag {huidigeIndex + 1} van {totaalVragen}
           </p>
         </div>
       </div>
