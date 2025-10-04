@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Hash, Calendar, MessageSquare, BookOpen, Keyboard } from 'lucide-react';
+import { Hash, Calendar, MessageSquare, BookOpen, Keyboard, ClipboardCheck } from 'lucide-react';
 import { useScore } from '../context/ScoreContext.jsx';
 import ModuleKaart from './ModuleKaart.jsx';
 import AccentHulp from './AccentHulp.jsx';
@@ -10,8 +10,52 @@ import AccentHulp from './AccentHulp.jsx';
  * @param {Function} props.onModuleSelect - Callback when a module is selected
  */
 const Hoofdmenu = React.memo(({ onModuleSelect }) => {
-  const { score, streak } = useScore();
+  const { score, streak, accuracyPercentage, recenteAntwoorden } = useScore();
   const [toonAccentHulp, setToonAccentHulp] = useState(false);
+
+  // Determine performance message and color based on accuracy
+  const getPerformanceInfo = () => {
+    if (accuracyPercentage === null || recenteAntwoorden.length < 5) {
+      return {
+        message: "Begin met oefenen",
+        color: "gray",
+        bgColor: "bg-gray-100",
+        textColor: "text-gray-800"
+      };
+    }
+    if (accuracyPercentage >= 80) {
+      return {
+        message: "Uitstekend!",
+        color: "green",
+        bgColor: "bg-green-100",
+        textColor: "text-green-800"
+      };
+    }
+    if (accuracyPercentage >= 60) {
+      return {
+        message: "Goed bezig!",
+        color: "yellow",
+        bgColor: "bg-yellow-100",
+        textColor: "text-yellow-800"
+      };
+    }
+    if (accuracyPercentage >= 40) {
+      return {
+        message: "Blijf oefenen",
+        color: "orange",
+        bgColor: "bg-orange-100",
+        textColor: "text-orange-800"
+      };
+    }
+    return {
+      message: "Meer oefenen nodig",
+      color: "red",
+      bgColor: "bg-red-100",
+      textColor: "text-red-800"
+    };
+  };
+
+  const performanceInfo = getPerformanceInfo();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-600 p-8">
@@ -34,14 +78,47 @@ const Hoofdmenu = React.memo(({ onModuleSelect }) => {
             </button>
           </div>
 
-          <div className="flex justify-center gap-4 mb-4">
+          <div className="flex justify-center gap-4 mb-4 flex-wrap">
             <div className="bg-yellow-100 px-4 py-2 rounded-lg">
               <span className="font-bold text-yellow-800">Score: {score}</span>
             </div>
             <div className="bg-green-100 px-4 py-2 rounded-lg">
-              <span className="font-bold text-green-800">Reeks: {streak}</span>
+              <span className="font-bold text-green-800">Reeks: {streak} 🔥</span>
+            </div>
+            <div className={`${performanceInfo.bgColor} px-4 py-2 rounded-lg`}>
+              <span className={`font-bold ${performanceInfo.textColor}`}>
+                📊 Prestatie: {accuracyPercentage !== null ? `${accuracyPercentage}%` : '-'}
+              </span>
             </div>
           </div>
+
+          {/* Visual performance indicator */}
+          {accuracyPercentage !== null && recenteAntwoorden.length >= 5 && (
+            <div className="mb-4">
+              <p className="text-center text-sm text-gray-600 mb-2">
+                {performanceInfo.message} (laatste {recenteAntwoorden.length} vragen)
+              </p>
+              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-300 ${
+                    accuracyPercentage >= 80 ? 'bg-green-500' :
+                    accuracyPercentage >= 60 ? 'bg-yellow-500' :
+                    accuracyPercentage >= 40 ? 'bg-orange-500' :
+                    'bg-red-500'
+                  }`}
+                  style={{ width: `${accuracyPercentage}%` }}
+                />
+              </div>
+              {/* Visual history of recent answers */}
+              <div className="flex justify-center gap-1 mt-2 flex-wrap">
+                {recenteAntwoorden.map((correct, idx) => (
+                  <span key={idx} className="text-sm">
+                    {correct ? '✓' : '✗'}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -72,6 +149,13 @@ const Hoofdmenu = React.memo(({ onModuleSelect }) => {
             beschrijving="Schrijf le/la/l'/les en un/une"
             kleur="from-pink-400 to-pink-600"
             onClick={() => onModuleSelect('grammatica')}
+          />
+          <ModuleKaart
+            icon={<ClipboardCheck className="w-8 h-8" />}
+            titel="Test Jezelf"
+            beschrijving="22 gemengde vragen uit alle onderwerpen"
+            kleur="from-yellow-400 to-orange-500"
+            onClick={() => onModuleSelect('test')}
           />
         </div>
 

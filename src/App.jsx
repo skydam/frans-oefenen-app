@@ -6,6 +6,7 @@ import GetallenModule from './modules/GetallenModule.jsx';
 import DagenModule from './modules/DagenModule.jsx';
 import VocabulaireModule from './modules/VocabulaireModule.jsx';
 import GrammaticaModule from './modules/GrammaticaModule.jsx';
+import TestModule from './modules/TestModule.jsx';
 
 /**
  * Main application component
@@ -40,6 +41,9 @@ const App = () => {
           )}
           {huidigeModule === 'grammatica' && (
             <GrammaticaModule onTerug={handleTerug} />
+          )}
+          {huidigeModule === 'test' && (
+            <TestModule onTerug={handleTerug} />
           )}
         </div>
       </ScoreProvider>

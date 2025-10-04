@@ -20,7 +20,7 @@ export const useModuleState = (dataItems, options = {}) => {
     getCorrectAnswer
   } = options;
 
-  const { score, incrementScore, resetStreak, hoogsteStreak } = useScore();
+  const { score, incrementScore, resetStreak, hoogsteStreak, trackAnswer } = useScore();
 
   // Shuffle questions once on mount using useMemo
   const shuffledItems = useMemo(() => shuffleArray(dataItems), [dataItems]);
@@ -78,6 +78,9 @@ export const useModuleState = (dataItems, options = {}) => {
     const correct = checkAnswer(userAnswer, correctAnswer, alternatives);
     setFeedback(correct);
 
+    // Track answer for rolling accuracy
+    trackAnswer(correct);
+
     const currentQuestionIndex = isHerhaalFase ? herhaalIndex : huidigeIndex;
 
     if (correct) {
@@ -114,7 +117,7 @@ export const useModuleState = (dataItems, options = {}) => {
     setBeantwoordeVragen(prev => new Set(prev).add(currentQuestionIndex));
 
     return correct;
-  }, [incrementScore, resetStreak, isHerhaalFase, herhaalIndex, huidigeIndex]);
+  }, [incrementScore, resetStreak, trackAnswer, isHerhaalFase, herhaalIndex, huidigeIndex]);
 
   /**
    * Moves to the next item
