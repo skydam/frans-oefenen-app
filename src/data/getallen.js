@@ -1,0 +1,23 @@
+export const getallen = [
+  { getal: 0, frans: "zéro" },
+  { getal: 1, frans: "un" },
+  { getal: 2, frans: "deux" },
+  { getal: 3, frans: "trois" },
+  { getal: 4, frans: "quatre" },
+  { getal: 5, frans: "cinq" },
+  { getal: 6, frans: "six" },
+  { getal: 7, frans: "sept" },
+  { getal: 8, frans: "huit" },
+  { getal: 9, frans: "neuf" },
+  { getal: 10, frans: "dix" },
+  { getal: 11, frans: "onze" },
+  { getal: 12, frans: "douze" },
+  { getal: 13, frans: "treize" },
+  { getal: 14, frans: "quatorze" },
+  { getal: 15, frans: "quinze" },
+  { getal: 16, frans: "seize" },
+  { getal: 17, frans: "dix-sept" },
+  { getal: 18, frans: "dix-huit" },
+  { getal: 19, frans: "dix-neuf" },
+  { getal: 20, frans: "vingt" }
+];
