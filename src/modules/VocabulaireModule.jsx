@@ -131,14 +131,11 @@ const VocabulaireModule = React.memo(({ onTerug }) => {
                 <p className="text-sm text-gray-600 mb-4">
                   {flashcardOmgedraaid ? '(klik om terug te draaien)' : '(klik om om te draaien)'}
                 </p>
-                <p className="text-4xl font-bold text-center text-gray-800 mb-2">
+                <p className="text-4xl font-bold text-center text-gray-800">
                   {flashcardOmgedraaid
                     ? (richting === 'frans-nl' ? huidig.nederlands : huidig.frans)
                     : (richting === 'frans-nl' ? huidig.frans : huidig.nederlands)
                   }
-                </p>
-                <p className="text-sm text-gray-500 italic">
-                  {huidig.categorie}
                 </p>
               </div>
 
@@ -154,11 +151,8 @@ const VocabulaireModule = React.memo(({ onTerug }) => {
               <p className="text-sm text-gray-600 mb-2 text-center">
                 Wat betekent dit?
               </p>
-              <p className="text-4xl font-bold text-center text-gray-800 mb-2">
+              <p className="text-4xl font-bold text-center text-gray-800 mb-6">
                 {richting === 'frans-nl' ? huidig.frans : huidig.nederlands}
-              </p>
-              <p className="text-sm text-gray-500 text-center mb-6 italic">
-                {huidig.categorie}
               </p>
 
               <AccentKnoppen onInsert={voegAccentToe} />
