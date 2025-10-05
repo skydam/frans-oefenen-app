@@ -8,6 +8,8 @@ import DagenModule from './modules/DagenModule.jsx';
 import VocabulaireModule from './modules/VocabulaireModule.jsx';
 import GrammaticaModule from './modules/GrammaticaModule.jsx';
 import TestModule from './modules/TestModule.jsx';
+import TestPracticeModule from './modules/TestPracticeModule.jsx';
+import { getTestConfig } from './data/testConfigs/index.js';
 
 /**
  * Main application component
@@ -27,6 +29,10 @@ const App = () => {
   // Parse module and test ID from huidigeModule
   const isTestMode = huidigeModule.startsWith('test:');
   const testId = isTestMode ? huidigeModule.substring(5) : null;
+
+  // Determine if it's a practice test (multiple choice) or regular test (typing)
+  const testConfig = testId ? getTestConfig(testId) : null;
+  const isPracticeTest = testConfig?.isMultipleChoice || false;
 
   return (
     <ErrorBoundary>
@@ -48,8 +54,11 @@ const App = () => {
             {huidigeModule === 'grammatica' && (
               <GrammaticaModule onTerug={handleTerug} />
             )}
-            {isTestMode && testId && (
+            {isTestMode && testId && !isPracticeTest && (
               <TestModule onTerug={handleTerug} testId={testId} />
+            )}
+            {isTestMode && testId && isPracticeTest && (
+              <TestPracticeModule onTerug={handleTerug} testId={testId} />
             )}
           </div>
         </ScoreProvider>

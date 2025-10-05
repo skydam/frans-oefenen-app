@@ -3,12 +3,14 @@
  * Central index of all available tests
  */
 import { testConfig as testCh01 } from './test-ch0-1.js';
+import { practiceTestConfig as practiceCh01 } from './practice-test-ch0-1.js';
 
 /**
  * All available tests
  */
 export const availableTests = [
-  testCh01
+  testCh01,
+  practiceCh01
   // Add more tests here as they're created
   // testCh23,
   // testMidterm,
