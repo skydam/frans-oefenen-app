@@ -105,8 +105,29 @@ export const generatePluralToSingularQuestion = (voorbeelden) => {
  * Example: "l'ami (m)" → "un"
  */
 export const generateArticleSwapToUnUne = (voorbeelden) => {
-  const word = pickOne(voorbeelden);
+  // Filter to only words with definite articles (le/la/l')
+  const definiteArticleWords = voorbeelden.filter(v =>
+    v.lidwoord === 'le' || v.lidwoord === 'la' || v.lidwoord === "l'"
+  );
 
+  if (definiteArticleWords.length === 0) {
+    // Fallback to all words if no definite articles found
+    const word = pickOne(voorbeelden);
+    const correct = word.geslacht === 'm' ? 'un' : 'une';
+    const wrong = word.geslacht === 'm' ? 'une' : 'un';
+
+    return {
+      type: 'multiple-choice',
+      question: `${word.woord}${word.geslacht ? ` (${word.geslacht})` : ''}`,
+      instruction: 'kies het juiste onbepaald lidwoord: un / une',
+      options: shuffleArray([correct, wrong]),
+      correct: correct,
+      points: 1,
+      columnFormat: true
+    };
+  }
+
+  const word = pickOne(definiteArticleWords);
   const correct = word.geslacht === 'm' ? 'un' : 'une';
   const wrong = word.geslacht === 'm' ? 'une' : 'un';
 
@@ -126,7 +147,14 @@ export const generateArticleSwapToUnUne = (voorbeelden) => {
  * Example: "une cousine" → "la"
  */
 export const generateArticleSwapToLeLa = (voorbeelden) => {
-  const word = pickOne(voorbeelden);
+  // Try to use words that already have definite articles set
+  const definiteArticleWords = voorbeelden.filter(v =>
+    v.lidwoord === 'le' || v.lidwoord === 'la' || v.lidwoord === "l'"
+  );
+
+  const word = definiteArticleWords.length > 0
+    ? pickOne(definiteArticleWords)
+    : pickOne(voorbeelden);
 
   // Determine source article (un/une based on gender)
   const sourceArticle = word.geslacht === 'm' ? 'un' : 'une';
@@ -134,7 +162,7 @@ export const generateArticleSwapToLeLa = (voorbeelden) => {
   // Determine correct answer
   let correct = word.lidwoord;
   if (!correct || correct === 'un' || correct === 'une') {
-    // Fallback if lidwoord not set properly
+    // Calculate correct article based on gender and klinker
     correct = word.klinker ? "l'" : (word.geslacht === 'm' ? 'le' : 'la');
   }
 
