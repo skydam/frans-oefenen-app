@@ -289,13 +289,36 @@ export const generateOddOneOutQuestion = (vocabulaire) => {
  * Example: Match questions with appropriate responses
  */
 export const generateDialogueMatchingQuestion = (vocabulaire) => {
-  // Define common dialogue pairs
+  // Define common dialogue pairs from Chapter 0-1
   const dialoguePairs = [
+    // Greetings and responses
     { q: "Bonjour, ça va?", a: "oui, ça va bien. Et toi?" },
-    { q: "Comment tu t'appelles?", a: "je m'appelle Roos" },
-    { q: "tu parles", a: "un peu français?" },
+    { q: "Salut!", a: "Salut, ça va?" },
+    { q: "Comment tu t'appelles?", a: "Je m'appelle Roos" },
+    { q: "Tu parles français?", a: "un peu" },
     { q: "Tu habites où?", a: "J'habite à Zwolle" },
-    { q: "le chat", a: "le chien" }, // These are related items, not Q&A
+    { q: "On a des devoirs?", a: "oui, page 10" },
+
+    // Related word pairs (vocabulary matching)
+    { q: "le chat", a: "le chien" },
+    { q: "le garçon", a: "la fille" },
+    { q: "le frère", a: "la sœur" },
+    { q: "petit", a: "grand" },
+    { q: "aujourd'hui", a: "le jour" },
+    { q: "la famille", a: "les vacances" },
+    { q: "la France", a: "français" },
+    { q: "la piscine", a: "la tente" },
+
+    // Actions and commands
+    { q: "apprends", a: "les mots" },
+    { q: "fais", a: "les devoirs" },
+    { q: "travaille", a: "bien" },
+    { q: "complète", a: "la page" },
+
+    // Questions and logical answers
+    { q: "Pourquoi?", a: "pour les vacances" },
+    { q: "Ici?", a: "oui, ici" },
+    { q: "Bon appétit!", a: "merci, et toi aussi" }
   ];
 
   const selectedPairs = pickRandom(dialoguePairs, 4);
