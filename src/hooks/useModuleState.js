@@ -116,6 +116,12 @@ export const useModuleState = (dataItems, options = {}) => {
     // Mark as answered
     setBeantwoordeVragen(prev => new Set(prev).add(currentQuestionIndex));
 
+    // Focus the container div so Enter key works for "Volgende"
+    setTimeout(() => {
+      const container = document.querySelector('[data-module-container]');
+      container?.focus();
+    }, 0);
+
     return correct;
   }, [incrementScore, resetStreak, trackAnswer, isHerhaalFase, herhaalIndex, huidigeIndex]);
 

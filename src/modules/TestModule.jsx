@@ -85,6 +85,12 @@ const TestModule = React.memo(({ onTerug }) => {
     };
 
     setResults(prev => [...prev, result]);
+
+    // Focus the container div so Enter key works for "Volgende"
+    setTimeout(() => {
+      const container = document.querySelector('[data-test-container]');
+      container?.focus();
+    }, 0);
   }, [antwoord, huidig, trackAnswer]);
 
   // Move to next question or complete test
@@ -165,6 +171,7 @@ const TestModule = React.memo(({ onTerug }) => {
       className="min-h-screen bg-gradient-to-br from-yellow-400 to-orange-500 p-8"
       onKeyDown={handleKeyPress}
       tabIndex={-1}
+      data-test-container
     >
       <div className="max-w-2xl mx-auto">
         <button

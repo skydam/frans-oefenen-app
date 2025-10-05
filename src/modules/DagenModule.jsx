@@ -64,6 +64,7 @@ const DagenModule = React.memo(({ onTerug }) => {
       className="min-h-screen bg-gradient-to-br from-purple-400 to-purple-600 p-8"
       onKeyDown={handleKeyPress}
       tabIndex={-1}
+      data-module-container
     >
       <div className="max-w-2xl mx-auto">
         <button
