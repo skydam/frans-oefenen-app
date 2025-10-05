@@ -133,6 +133,11 @@ export const useModuleState = (dataItems, options = {}) => {
     setAntwoord('');
     setFeedback(null);
 
+    // Focus input for next question
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+
     if (isHerhaalFase) {
       // In review phase
       if (herhaalIndex < herhaalVragen.length - 1) {

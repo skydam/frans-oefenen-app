@@ -95,14 +95,16 @@ const TestModule = React.memo(({ onTerug }) => {
 
   // Move to next question or complete test
   const volgend = useCallback(() => {
+    setAntwoord('');
+    setFeedback(null);
+
     if (huidigeIndex + 1 >= testVragen.length) {
       // Test complete
       setIsVoltooid(true);
     } else {
       // Next question
       setHuidigeIndex(prev => prev + 1);
-      setAntwoord('');
-      setFeedback(null);
+      // Focus input for next question
       setTimeout(() => inputRef.current?.focus(), 0);
     }
   }, [huidigeIndex, testVragen.length]);
