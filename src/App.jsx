@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ScoreProvider } from './context/ScoreContext.jsx';
+import { ChapterProvider } from './context/ChapterContext.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import Hoofdmenu from './components/Hoofdmenu.jsx';
 import GetallenModule from './modules/GetallenModule.jsx';
@@ -23,30 +24,36 @@ const App = () => {
     setHuidigeModule('menu');
   };
 
+  // Parse module and test ID from huidigeModule
+  const isTestMode = huidigeModule.startsWith('test:');
+  const testId = isTestMode ? huidigeModule.substring(5) : null;
+
   return (
     <ErrorBoundary>
-      <ScoreProvider>
-        <div className="app">
-          {huidigeModule === 'menu' && (
-            <Hoofdmenu onModuleSelect={handleModuleSelect} />
-          )}
-          {huidigeModule === 'getallen' && (
-            <GetallenModule onTerug={handleTerug} />
-          )}
-          {huidigeModule === 'dagen' && (
-            <DagenModule onTerug={handleTerug} />
-          )}
-          {huidigeModule === 'vocabulaire' && (
-            <VocabulaireModule onTerug={handleTerug} />
-          )}
-          {huidigeModule === 'grammatica' && (
-            <GrammaticaModule onTerug={handleTerug} />
-          )}
-          {huidigeModule === 'test' && (
-            <TestModule onTerug={handleTerug} />
-          )}
-        </div>
-      </ScoreProvider>
+      <ChapterProvider>
+        <ScoreProvider>
+          <div className="app">
+            {huidigeModule === 'menu' && (
+              <Hoofdmenu onModuleSelect={handleModuleSelect} />
+            )}
+            {huidigeModule === 'getallen' && (
+              <GetallenModule onTerug={handleTerug} />
+            )}
+            {huidigeModule === 'dagen' && (
+              <DagenModule onTerug={handleTerug} />
+            )}
+            {huidigeModule === 'vocabulaire' && (
+              <VocabulaireModule onTerug={handleTerug} />
+            )}
+            {huidigeModule === 'grammatica' && (
+              <GrammaticaModule onTerug={handleTerug} />
+            )}
+            {isTestMode && testId && (
+              <TestModule onTerug={handleTerug} testId={testId} />
+            )}
+          </div>
+        </ScoreProvider>
+      </ChapterProvider>
     </ErrorBoundary>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { ArrowLeft, Shuffle, Check, X } from 'lucide-react';
 import { useModuleState } from '../hooks/useModuleState.js';
+import { useChapter } from '../context/ChapterContext.jsx';
 import AccentKnoppen from '../components/AccentKnoppen.jsx';
 import CompletionScreen from '../components/CompletionScreen.jsx';
-import { vocabulaire } from '../data/vocabulaire.js';
 
 /**
  * VocabulaireModule - Practice vocabulary from Chapters 0 & 1
@@ -11,6 +11,9 @@ import { vocabulaire } from '../data/vocabulaire.js';
  * Supports bidirectional practice (Frans→NL and NL→Frans)
  */
 const VocabulaireModule = React.memo(({ onTerug }) => {
+  const { currentChapterData } = useChapter();
+  const vocabulaire = currentChapterData?.vocabulaire || [];
+
   const [oefenModus, setOefenModus] = useState('quiz');
   const [flashcardOmgedraaid, setFlashcardOmgedraaid] = useState(false);
 

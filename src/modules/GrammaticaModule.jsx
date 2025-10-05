@@ -1,15 +1,26 @@
 import React, { useState, useCallback } from 'react';
 import { ArrowLeft, Check, X } from 'lucide-react';
 import { useModuleState } from '../hooks/useModuleState.js';
+import { useChapter } from '../context/ChapterContext.jsx';
 import AccentKnoppen from '../components/AccentKnoppen.jsx';
 import CompletionScreen from '../components/CompletionScreen.jsx';
-import { voorbeelden, lidwoorden } from '../data/voorbeelden.js';
+
+// Lidwoorden reference (same for all chapters)
+export const lidwoorden = [
+  { type: 'mannelijk', bepaald: 'le', onbepaald: 'un' },
+  { type: 'vrouwelijk', bepaald: 'la', onbepaald: 'une' },
+  { type: 'meervoud', bepaald: 'les', onbepaald: 'des' },
+  { type: 'voor klinker/stille h', bepaald: "l'", onbepaald: "un/une" }
+];
 
 /**
  * GrammaticaModule - Practice French articles (lidwoorden)
  * Supports two modes: theory (explanation) and practice (typing)
  */
 const GrammaticaModule = React.memo(({ onTerug }) => {
+  const { currentChapterData } = useChapter();
+  const voorbeelden = currentChapterData?.voorbeelden || [];
+
   const [theorieModus, setTheorieModus] = useState(true);
 
   const {

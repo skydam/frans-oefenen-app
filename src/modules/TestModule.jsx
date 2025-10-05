@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ArrowLeft, Check, X } from 'lucide-react';
-import { getallen } from '../data/getallen.js';
-import { dagen } from '../data/dagen.js';
-import { vocabulaire } from '../data/vocabulaire.js';
-import { voorbeelden } from '../data/voorbeelden.js';
-import { testConfig } from '../data/testConfig.js';
+import { getTestConfig } from '../data/testConfigs/index.js';
+import { useChapter } from '../context/ChapterContext.jsx';
 import { createMixedTest, calculateCategoryScores } from '../utils/testHelpers.js';
 import { checkAnswer } from '../utils/validation.js';
 import { useScore } from '../context/ScoreContext.jsx';
@@ -13,11 +10,16 @@ import TestResultsScreen from '../components/TestResultsScreen.jsx';
 
 /**
  * TestModule - Mixed subject test with all categories
- * One-shot test with 22 questions covering all subjects
+ * Supports multiple test configurations
+ * @param {string} testId - ID of the test config to use
  */
-const TestModule = React.memo(({ onTerug }) => {
+const TestModule = React.memo(({ onTerug, testId }) => {
   const { trackAnswer } = useScore();
+  const { currentChapterData } = useChapter();
   const inputRef = useRef(null);
+
+  // Load test config
+  const testConfig = getTestConfig(testId);
 
   // State
   const [testVragen, setTestVragen] = useState([]);
@@ -30,16 +32,12 @@ const TestModule = React.memo(({ onTerug }) => {
 
   // Initialize test on mount
   useEffect(() => {
-    const allData = {
-      getallen,
-      dagen,
-      vocabulaire,
-      voorbeelden
-    };
-    const questions = createMixedTest(allData, testConfig);
+    if (!currentChapterData || !testConfig) return;
+
+    const questions = createMixedTest(currentChapterData, testConfig);
     setTestVragen(questions);
     setStartTime(Date.now());
-  }, []);
+  }, [currentChapterData, testConfig]);
 
   // Current question
   const huidig = testVragen[huidigeIndex];
@@ -122,13 +120,9 @@ const TestModule = React.memo(({ onTerug }) => {
 
   // Restart test
   const herstart = useCallback(() => {
-    const allData = {
-      getallen,
-      dagen,
-      vocabulaire,
-      voorbeelden
-    };
-    const questions = createMixedTest(allData, testConfig);
+    if (!currentChapterData || !testConfig) return;
+
+    const questions = createMixedTest(currentChapterData, testConfig);
     setTestVragen(questions);
     setHuidigeIndex(0);
     setAntwoord('');
@@ -136,7 +130,7 @@ const TestModule = React.memo(({ onTerug }) => {
     setResults([]);
     setStartTime(Date.now());
     setIsVoltooid(false);
-  }, []);
+  }, [currentChapterData, testConfig]);
 
   // Show results screen when test is complete
   if (isVoltooid) {
@@ -185,7 +179,7 @@ const TestModule = React.memo(({ onTerug }) => {
 
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-            Gemengde Test
+            {testConfig?.name || 'Gemengde Test'}
           </h2>
 
           <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-8 mb-6">

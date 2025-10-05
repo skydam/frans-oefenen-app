@@ -1,15 +1,18 @@
 import React, { useCallback } from 'react';
 import { ArrowLeft, Shuffle, Check, X } from 'lucide-react';
 import { useModuleState } from '../hooks/useModuleState.js';
+import { useChapter } from '../context/ChapterContext.jsx';
 import AccentKnoppen from '../components/AccentKnoppen.jsx';
 import CompletionScreen from '../components/CompletionScreen.jsx';
-import { getallen } from '../data/getallen.js';
 
 /**
  * GetallenModule - Practice numbers 0-20 in French
  * Supports bidirectional practice (Frans→NL and NL→Frans)
  */
 const GetallenModule = React.memo(({ onTerug }) => {
+  const { currentChapterData } = useChapter();
+  const getallen = currentChapterData?.getallen || [];
+
   const {
     huidigeIndex,
     richting,

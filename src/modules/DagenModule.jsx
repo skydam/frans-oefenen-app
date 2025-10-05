@@ -1,15 +1,18 @@
 import React, { useCallback } from 'react';
 import { ArrowLeft, Shuffle, Check, X } from 'lucide-react';
 import { useModuleState } from '../hooks/useModuleState.js';
+import { useChapter } from '../context/ChapterContext.jsx';
 import AccentKnoppen from '../components/AccentKnoppen.jsx';
 import CompletionScreen from '../components/CompletionScreen.jsx';
-import { dagen } from '../data/dagen.js';
 
 /**
  * DagenModule - Practice days of the week in French
  * Supports bidirectional practice (Frans→NL and NL→Frans)
  */
 const DagenModule = React.memo(({ onTerug }) => {
+  const { currentChapterData } = useChapter();
+  const dagen = currentChapterData?.dagen || [];
+
   const {
     huidigeIndex,
     richting,

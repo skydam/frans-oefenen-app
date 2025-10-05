@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Hash, Calendar, MessageSquare, BookOpen, Keyboard, ClipboardCheck } from 'lucide-react';
 import { useScore } from '../context/ScoreContext.jsx';
+import { useChapter } from '../context/ChapterContext.jsx';
+import { getTestsForChapter } from '../data/testConfigs/index.js';
 import ModuleKaart from './ModuleKaart.jsx';
 import AccentHulp from './AccentHulp.jsx';
 
@@ -11,7 +13,11 @@ import AccentHulp from './AccentHulp.jsx';
  */
 const Hoofdmenu = React.memo(({ onModuleSelect }) => {
   const { score, streak, accuracyPercentage, recenteAntwoorden } = useScore();
+  const { currentChapterMetadata, availableChapters, selectChapter, selectedChapterId } = useChapter();
   const [toonAccentHulp, setToonAccentHulp] = useState(false);
+
+  // Get available tests for current chapter
+  const availableTests = getTestsForChapter(selectedChapterId);
 
   // Determine performance message and color based on accuracy
   const getPerformanceInfo = () => {
@@ -66,7 +72,25 @@ const Hoofdmenu = React.memo(({ onModuleSelect }) => {
               <h1 className="text-4xl font-bold text-center mb-2 text-gray-800">
                 Frans Oefenen
               </h1>
-              <p className="text-center text-gray-600 mb-2">Grandes Lignes - Chapitre 0 & 1</p>
+              <p className="text-center text-gray-600 mb-2">{currentChapterMetadata?.book} - {currentChapterMetadata?.name}</p>
+
+              {/* Chapter selector */}
+              {availableChapters.length > 1 && (
+                <div className="flex justify-center mb-2">
+                  <select
+                    value={currentChapterMetadata?.id}
+                    onChange={(e) => selectChapter(e.target.value)}
+                    className="px-4 py-2 border-2 border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:outline-none"
+                  >
+                    {availableChapters.map(chapter => (
+                      <option key={chapter.id} value={chapter.id}>
+                        {chapter.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <p className="text-center text-sm text-gray-500 mb-2">Oefen door te <strong>typen</strong> - net als op de toets!</p>
             </div>
             <button
@@ -150,13 +174,17 @@ const Hoofdmenu = React.memo(({ onModuleSelect }) => {
             kleur="from-pink-400 to-pink-600"
             onClick={() => onModuleSelect('grammatica')}
           />
-          <ModuleKaart
-            icon={<ClipboardCheck className="w-8 h-8" />}
-            titel="Test Jezelf"
-            beschrijving="22 gemengde vragen uit alle onderwerpen"
-            kleur="from-yellow-400 to-orange-500"
-            onClick={() => onModuleSelect('test')}
-          />
+          {/* Render test cards for current chapter */}
+          {availableTests.map(test => (
+            <ModuleKaart
+              key={test.id}
+              icon={<ClipboardCheck className="w-8 h-8" />}
+              titel={test.name}
+              beschrijving={test.description}
+              kleur={test.color}
+              onClick={() => onModuleSelect(`test:${test.id}`)}
+            />
+          ))}
         </div>
 
         {toonAccentHulp && <AccentHulp onClose={() => setToonAccentHulp(false)} />}
