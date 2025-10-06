@@ -23,12 +23,15 @@ export const practiceTestConfig = {
     { type: 'number-math', count: 3 },             // 3 questions: 8 + 3 = onze
     { type: 'number-sequencing', count: 1 },       // 1 question: order numbers
 
+    // Days of the week
+    { type: 'days-of-week', count: 2 },            // 2 questions: day order or translation
+
     // Vocabulary
     { type: 'odd-one-out', count: 4 },             // 4 questions: which doesn't belong?
     { type: 'dialogue-matching', count: 1 }        // 1 question: match dialogues
   ],
 
-  totaal: 23, // Total questions in test
+  totaal: 25, // Total questions in test
   slaagPercentage: 70, // Percentage needed to pass
   isMultipleChoice: true,
   tijdLimiet: null // No time limit

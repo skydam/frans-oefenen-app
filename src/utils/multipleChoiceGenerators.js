@@ -285,7 +285,74 @@ export const generateOddOneOutQuestion = (vocabulaire) => {
 };
 
 /**
- * Generator 8: Dialogue Matching
+ * Generator 8: Days of the Week
+ * Example: "Welke dag komt na lundi?" → "mardi"
+ */
+export const generateDaysOfWeekQuestion = (dagen) => {
+  const questionTypes = [
+    'next', // Which day comes after...
+    'previous', // Which day comes before...
+    'translate' // What is ... in French/Dutch
+  ];
+
+  const questionType = pickOne(questionTypes);
+  const dayIndex = randomInt(0, dagen.length - 1);
+  const currentDay = dagen[dayIndex];
+
+  let question, correct;
+  const wrongOptions = [];
+
+  if (questionType === 'next') {
+    const nextIndex = (dayIndex + 1) % dagen.length;
+    correct = dagen[nextIndex].frans;
+    question = `Welke dag komt na ${currentDay.frans}?`;
+
+    // Add wrong options (nearby days)
+    const prevIndex = (dayIndex - 1 + dagen.length) % dagen.length;
+    const afterNextIndex = (dayIndex + 2) % dagen.length;
+    wrongOptions.push(dagen[prevIndex].frans);
+    wrongOptions.push(dagen[afterNextIndex].frans);
+    wrongOptions.push(currentDay.frans);
+
+  } else if (questionType === 'previous') {
+    const prevIndex = (dayIndex - 1 + dagen.length) % dagen.length;
+    correct = dagen[prevIndex].frans;
+    question = `Welke dag komt vóór ${currentDay.frans}?`;
+
+    // Add wrong options (nearby days)
+    const nextIndex = (dayIndex + 1) % dagen.length;
+    const beforePrevIndex = (dayIndex - 2 + dagen.length) % dagen.length;
+    wrongOptions.push(dagen[nextIndex].frans);
+    wrongOptions.push(dagen[beforePrevIndex].frans);
+    wrongOptions.push(currentDay.frans);
+
+  } else { // translate
+    const direction = Math.random() > 0.5 ? 'nl-fr' : 'fr-nl';
+
+    if (direction === 'nl-fr') {
+      question = currentDay.nederlands;
+      correct = currentDay.frans;
+      // Add other French days as wrong options
+      wrongOptions.push(...dagen.filter(d => d.frans !== correct).map(d => d.frans));
+    } else {
+      question = currentDay.frans;
+      correct = currentDay.nederlands;
+      // Add other Dutch days as wrong options
+      wrongOptions.push(...dagen.filter(d => d.nederlands !== correct).map(d => d.nederlands));
+    }
+  }
+
+  return {
+    type: 'multiple-choice',
+    question: question,
+    options: shuffleArray([correct, ...pickRandom(wrongOptions, 3)]),
+    correct: correct,
+    points: 1
+  };
+};
+
+/**
+ * Generator 9: Dialogue Matching
  * Example: Match questions with appropriate responses
  */
 export const generateDialogueMatchingQuestion = (vocabulaire) => {
@@ -344,7 +411,7 @@ export const generateDialogueMatchingQuestion = (vocabulaire) => {
  * Generate a mixed practice test with all question types
  */
 export const generatePracticeTest = (chapterData, config) => {
-  const { getallen, vocabulaire, voorbeelden } = chapterData;
+  const { getallen, vocabulaire, voorbeelden, dagen } = chapterData;
   const questions = [];
 
   config.questionTypes.forEach(({ type, count }) => {
@@ -372,6 +439,9 @@ export const generatePracticeTest = (chapterData, config) => {
           break;
         case 'odd-one-out':
           question = generateOddOneOutQuestion(vocabulaire);
+          break;
+        case 'days-of-week':
+          question = generateDaysOfWeekQuestion(dagen);
           break;
         case 'dialogue-matching':
           question = generateDialogueMatchingQuestion(vocabulaire);
