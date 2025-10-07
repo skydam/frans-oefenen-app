@@ -46,6 +46,16 @@ export const useModuleState = (dataItems, options = {}) => {
   const huidig = isHerhaalFase ? herhaalVragen[herhaalIndex] : shuffledItems[huidigeIndex];
   const totaalVragen = shuffledItems.length;
 
+  // Get the original index of the current question in shuffledItems
+  const getCurrentOriginalIndex = useCallback(() => {
+    if (isHerhaalFase) {
+      const currentQuestion = herhaalVragen[herhaalIndex];
+      return shuffledItems.findIndex(item => item === currentQuestion);
+    } else {
+      return huidigeIndex;
+    }
+  }, [isHerhaalFase, herhaalIndex, herhaalVragen, huidigeIndex, shuffledItems]);
+
   /**
    * Inserts an accent character at cursor position
    * FIX: Use requestAnimationFrame instead of setTimeout to prevent race conditions
@@ -81,7 +91,8 @@ export const useModuleState = (dataItems, options = {}) => {
     // Track answer for rolling accuracy
     trackAnswer(correct);
 
-    const currentQuestionIndex = isHerhaalFase ? herhaalIndex : huidigeIndex;
+    // Get the original index in shuffledItems (not the herhaalIndex!)
+    const currentQuestionIndex = getCurrentOriginalIndex();
 
     if (correct) {
       incrementScore(); // Uses functional update internally
@@ -123,7 +134,7 @@ export const useModuleState = (dataItems, options = {}) => {
     }, 0);
 
     return correct;
-  }, [incrementScore, resetStreak, trackAnswer, isHerhaalFase, herhaalIndex, huidigeIndex]);
+  }, [incrementScore, resetStreak, trackAnswer, isHerhaalFase, getCurrentOriginalIndex]);
 
   /**
    * Moves to the next item
